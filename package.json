@@ -1,0 +1,19 @@
+{
+  "name": "rpi-fixed-resolution",
+  "version": "1.0.0",
+  "description": "SystemD service to force a fixed screen resolution for Raspberry Pi OS Bullseye.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bccsa/rpi-fixed-resolution.git"
+  },
+  "author": "Ivan Slabbert",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bccsa/rpi-fixed-resolution/issues"
+  },
+  "homepage": "https://github.com/bccsa/rpi-fixed-resolution#readme"
+}
