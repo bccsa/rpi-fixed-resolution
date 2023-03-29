@@ -89,6 +89,7 @@ function xrandrMonitor(conf) {
             output.stdout.split('\n').forEach(line => {
                 let display = line.match(/HDMI-[1-2]/gmi);
                 let state = line.match(/(dis)?connected/gmi);
+                let res = line.match(/[0-9]*x[0-9]*\+[0-9]*\+[0-9]*/gmi);
 
                 if (Array.isArray(display) && display.length > 0) {
                     display = display[0];
@@ -98,14 +99,18 @@ function xrandrMonitor(conf) {
                     state = state[0];
                 }
 
-                if (display && state) {
+                if (Array.isArray(res) && res.length > 0) {
+                    res = res[0];
+                }
+
+                if (display && state && res) {
                     // If an HDMI display is connected on first run, set hdmiSoundEnabled to true to prevent running the sound configuration twice
                     // if (state == 'connected' && !xrandrState[display]) {
                     //     hdmiSoundEnabled = true;
                     // }
 
-                    // Fire event if state changes to connected
-                    if (state == 'connected' && state != xrandrState[display]) {
+                    // Fire event if state changes to connected or resolution / position changed
+                    if (state == 'connected' && (state != xrandrState[display]) || res != conf.resolution + '+0+0') {
                         event.emit('connect', display);
                     }
 
@@ -140,7 +145,9 @@ event.on('connect', display => {
     // } else {
     //     cmd2 = `pacmd set-default-sink 1`;
     // }
-    exec(cmd2, { shell: true }).catch(err => { });
+    exec(cmd2, { shell: true }).then(output => {
+        console.log(output.stdout);
+    }).catch(err => { console.error(err)});
 });
 
 // Start interval timer
