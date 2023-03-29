@@ -146,7 +146,7 @@ event.on('connect', display => {
 // Start interval timer
 function startCycle(conf) {
     // first run
-    xrandrMonitor(conf);
+    //xrandrMonitor(conf);
 
     // Subsequent runs
     setInterval(() => { xrandrMonitor(conf) }, conf.interval);
