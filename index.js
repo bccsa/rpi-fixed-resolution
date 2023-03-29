@@ -114,6 +114,11 @@ function xrandrMonitor(conf) {
                         event.emit('connect', display);
                     }
 
+                    // Reset audio on new connection
+                    if (state == 'connected' && state != xrandrState[display]) {
+                        event.emit('audio');
+                    }
+
                     xrandrState[display] = state;
                 }
             });
@@ -124,36 +129,33 @@ function xrandrMonitor(conf) {
 // Listen for the monitor 'connect' event
 event.on('connect', display => {
     // Set resolution and refresh rate
-    let cmd1 = `DISPLAY=:0 xrandr --output ${display} --mode ${conf.resolution} --rate ${conf.refreshRate} --pos ${conf.position}`;
-    exec(cmd1, { shell: true }).catch(err => { });
+    let cmd = `DISPLAY=:0 xrandr --output ${display} --mode ${conf.resolution} --rate ${conf.refreshRate} --pos ${conf.position}`;
+    exec(cmd, { shell: true }).catch(err => { });
+});
 
+// Listen for the 'audio' event
+event.on('audio', () => {
     // Set sound output
     // ref1 https://forums.raspberrypi.com/viewtopic.php?t=343523
     // ref2 https://unix.stackexchange.com/questions/65246/change-pulseaudio-input-output-from-shell
-    let cmd2 = `
+    let cmd = `
         DISPLAY=:0 systemctl --user stop pulseaudio.service
         DISPLAY=:0 systemctl --user stop pulseaudio.socket
         DISPLAY=:0 pulseaudio --start
         DISPLAY=:0 pacmd set-default-sink 1`;
-    // if (!hdmiSoundEnabled) {
-    //     cmd2 = `
-    //         systemctl --user stop pulseaudio.service
-    //         systemctl --user stop pulseaudio.socket
-    //         pulseaudio --start
-    //         pacmd set-default-sink 1`;
-    //     hdmiSoundEnabled = true;
-    // } else {
-    //     cmd2 = `pacmd set-default-sink 1`;
-    // }
-    exec(cmd2, { shell: true }).then(output => {
+
+    exec(cmd, { shell: true }).then(output => {
         console.log(output.stdout);
     }).catch(err => { console.error(err)});
 });
 
 // Start interval timer
 function startCycle(conf) {
+    // Reset audio on startup
+    event.emit('audio');
+
     // first run
-    //xrandrMonitor(conf);
+    xrandrMonitor(conf);
 
     // Subsequent runs
     setInterval(() => { xrandrMonitor(conf) }, conf.interval);
