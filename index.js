@@ -139,10 +139,9 @@ event.on('audio', () => {
     // ref1 https://forums.raspberrypi.com/viewtopic.php?t=343523
     // ref2 https://unix.stackexchange.com/questions/65246/change-pulseaudio-input-output-from-shell
     let cmd = `
-        DISPLAY=:0 systemctl --user stop pulseaudio.service
-        DISPLAY=:0 systemctl --user stop pulseaudio.socket
-        DISPLAY=:0 pulseaudio --start
-        DISPLAY=:0 pacmd set-default-sink 1`;
+        sudo -u "${conf.user}" XDG_RUNTIME_DIR="/run/user/$(id -u ${conf.user})"  systemctl --user stop pulseaudio.service
+        sudo -u "${conf.user}" XDG_RUNTIME_DIR="/run/user/$(id -u ${conf.user})"  systemctl --user stop pulseaudio.socket
+        sudo -u "${conf.user}" XDG_RUNTIME_DIR="/run/user/$(id -u ${conf.user})"  pulseaudio --start`;
 
     exec(cmd, { shell: true }).then(output => {
         console.log(output.stdout);
