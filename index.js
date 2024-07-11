@@ -140,7 +140,9 @@ event.on('audio', () => {
     // ref2 https://unix.stackexchange.com/questions/65246/change-pulseaudio-input-output-from-shell
     let cmd = `
         sudo -u "${conf.user}" XDG_RUNTIME_DIR="/run/user/$(id -u ${conf.user})" killall pulseaudio
-        sudo -u "${conf.user}" XDG_RUNTIME_DIR="/run/user/$(id -u ${conf.user})" systemctl --user start pulseaudio.service`;
+        sudo -u "${conf.user}" XDG_RUNTIME_DIR="/run/user/$(id -u ${conf.user})" systemctl --user start pulseaudio.service
+        sudo -u "${conf.user}" XDG_RUNTIME_DIR="/run/user/$(id -u ${conf.user})" pacmd set-default-sink 1`;
+        
 
     exec(cmd, { shell: true }).then(output => {
         console.log(output.stdout);
