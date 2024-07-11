@@ -139,9 +139,8 @@ event.on('audio', () => {
     // ref1 https://forums.raspberrypi.com/viewtopic.php?t=343523
     // ref2 https://unix.stackexchange.com/questions/65246/change-pulseaudio-input-output-from-shell
     let cmd = `
-        sudo -u "${conf.user}" XDG_RUNTIME_DIR="/run/user/$(id -u ${conf.user})"  systemctl --user stop pulseaudio.service
-        sudo -u "${conf.user}" XDG_RUNTIME_DIR="/run/user/$(id -u ${conf.user})"  systemctl --user stop pulseaudio.socket
-        sudo -u "${conf.user}" XDG_RUNTIME_DIR="/run/user/$(id -u ${conf.user})"  pulseaudio --start`;
+        sudo -u "${conf.user}" XDG_RUNTIME_DIR="/run/user/$(id -u ${conf.user})" killall pulseaudio
+        sudo -u "${conf.user}" XDG_RUNTIME_DIR="/run/user/$(id -u ${conf.user})" systemctl --user start pulseaudio.service`;
 
     exec(cmd, { shell: true }).then(output => {
         console.log(output.stdout);
